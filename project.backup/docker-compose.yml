@@ -1,0 +1,33 @@
+version: '3'
+services:
+  nginx:
+    build:
+      context: ./
+      dockerfile: Dockerfile.nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./src/main/webapp:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - lavagna
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=123
+    volumes:
+      - mydata:/var/lib/mysql
+      - ./lavagna.sql:/docker-entrypoint-initdb.d/lavagna.sql
+
+  lavagna:
+    build: ./
+    ports:
+      - 8080:8080
+    restart: always
+    depends_on:
+      - mysql
+  
+
+volumes:
+  mydata:
+
